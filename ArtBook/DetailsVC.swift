@@ -15,6 +15,7 @@ class DetailsVC: UIViewController, UIImagePickerControllerDelegate, UINavigation
     @IBOutlet weak var nameText: UITextField!
     @IBOutlet weak var imageView: UIImageView!
     
+    @IBOutlet weak var saveButtons: UIButton!
     
     var chosenPainting = ""
     var chosenUUID : UUID?
@@ -23,6 +24,8 @@ class DetailsVC: UIViewController, UIImagePickerControllerDelegate, UINavigation
         super.viewDidLoad()
         
         if chosenPainting != ""{
+         
+            saveButtons.isHidden = true
             //Core Data
             
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -59,6 +62,8 @@ class DetailsVC: UIViewController, UIImagePickerControllerDelegate, UINavigation
             }
             
         }else{
+            saveButtons.isHidden = false
+            saveButtons.isEnabled = false
             
         }
         
@@ -87,6 +92,7 @@ class DetailsVC: UIViewController, UIImagePickerControllerDelegate, UINavigation
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         imageView.image = info[.originalImage] as? UIImage
+        saveButtons.isEnabled = true
         self.dismiss(animated: true, completion: nil)
     }
     @objc func hideKeyboard() {

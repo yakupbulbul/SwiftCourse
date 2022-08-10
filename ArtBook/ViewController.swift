@@ -91,6 +91,58 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         performSegue(withIdentifier: "toDetailsVC", sender: nil)
     }
 
+    
+    func tableView(_ tableView: UITableView,   commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete{
+            let appDelegete = UIApplication.shared.delegate as! AppDelegate
+            let context  = appDelegete.persistentContainer.viewContext
+            
+            let fetchReguest = NSFetchRequest <NSFetchRequestResult> (entityName: "Paintings")
+            
+            let idString = idArray[indexPath.row].uuidString
+            
+            fetchReguest.predicate = NSPredicate(format: "id = %@", idString)
+            
+            
+            
+            fetchReguest.returnsObjectsAsFaults = false
+            
+            do {
+                let result = try context.fetch(fetchReguest)
+                if result.count > 0{
+                    for result in result as! [NSManagedObject] {
+                   
+                        if let id = result.value(forKey: "id") as? UUID {
+                            if id == idArray[indexPath.row] {
+                                context.delete(result)
+                                nameArray.remove(at: indexPath.row)
+                                idArray.remove(at: indexPath.row)
+                                self.tableView.reloadData()
+                               
+                                
+                                do{
+                                    try  context.save()
+                                }catch{
+                                    print("Error")
+                                }
+                                
+                                break
+                            }
+                        }
+                       
+                        
+                    }
+                }
+               
+                
+            }
+            catch{
+                print("Eror")
+            }
+        }
+
+    }
+    
 
 }
 
